@@ -1,0 +1,129 @@
+diff --git a/lect0.typ b/lect0.typ
+index 32af9f6..dc21ea9 100644
+--- a/lect0.typ
++++ b/lect0.typ
+@@ -47,6 +47,39 @@ $ dif(q') = sigma R^2 sin(theta) dif(phi) dif(theta) $
+ 
+ ===== הגדרות
+ 
++הגיאומטריה, ממבט מהצד. הטבעת המנוקדת היא כל הנקודות על המעטפת עם אותו $theta$, ועליה רץ אינטגרל ה-$phi$:
++
++#align(center, canvas({
++  import draw: *
++  let R = 1.5
++  let z = 3.6
++  let th = 50deg
++  // הנקודה על המעטפת, ב-phi = 0
++  let q = (R * calc.sin(th), R * calc.cos(th))
++  // המעטפת, כמו שרואים אותה מהצד
++  circle((0, 0), radius: R, fill: luma(230))
++  // הטבעת של theta קבוע
++  circle((0, q.at(1)), radius: (q.at(0), 0.25 * q.at(0)), stroke: (dash: "dotted"))
++  // ציר z והנקודה P
++  line((0, 0), (0, z))
++  circle((0, z), radius: 0.05, fill: black)
++  content((0, z), $P$, anchor: "south", padding: 4pt)
++  content((0, 2.6), $z$, anchor: "east", padding: 4pt)
++  // הרדיוס אל הנקודה על המעטפת, והקו ממנה אל P
++  line((0, 0), q)
++  circle(q, radius: 0.05, fill: black)
++  content((q.at(0) / 2, q.at(1) / 2), $R$, anchor: "north-west", padding: 3pt)
++  content(q, $arrow(r)'$, anchor: "west", padding: 4pt)
++  line(q, (0, z), stroke: (dash: "dashed"))
++  content((q.at(0) / 2, (q.at(1) + z) / 2), $arrow(r) - arrow(r)'$, anchor: "west", padding: 4pt)
++  // הזווית theta
++  line(..range(11).map(i => {
++    let t = 90deg - th + i * th / 10
++    (0.35 * calc.cos(t), 0.35 * calc.sin(t))
++  }))
++  content((0.62 * calc.cos(90deg - th / 2), 0.62 * calc.sin(90deg - th / 2)), $theta$)
++}))
++
+ $ arrow(r)' = R sin(theta) cos(phi) hat(x) + R sin(theta) sin(phi) hat(y) + R cos(theta) hat(z) $
+ 
+ $ arrow(r) - arrow(r)' = -R sin(theta) cos(phi) hat(x) - R sin(theta) sin(phi) hat(y) + (z - R cos(theta)) hat(z) $
+@@ -93,7 +126,6 @@ $ = 2/(z^2) quad quad (z > R) $
+ $ arrow(E)(z) = k sigma R^2 2 pi dot 2/(z^2) hat(z) = (k hl(4 pi R^2 sigma))/(z^2) hat(z) quad quad z > R $
+ 
+ אז אם אתה בתוך המעטפת, השדה לא משפיע עליך, ואם אתה בחוץ, השדה משפיע עליך כאילו כל המטען מרוכז בנקודה יחידה באמצע הכדור.
+-#todo[להוסיף ציור]
+ ניוטון גילה שהעובדה הזו נכונה לשדה כבידתי, לפני שגילו אותה על שדה חשמלי. הוא גם הראה שבתוך מעטפת ספרואידית (Spheroid) השדה מתאפס, לא רק בתוך כדור מושלם.
+ 
+ ==== תרגיל: שדה של דיסקה
+@@ -270,14 +302,65 @@ $ Phi = integral_0 ^(2pi) integral_0 ^pi k q sin(theta) dif(theta) dif(phi) = q
+ }))
+ 
+ 
+-#todo[
+-    ==== זווית מרחבית
+-    אנחנו לא באמת יודעים למדוד זווית. אנחנו פשוט מודדים *אורך* של חלק ממעגל יחידה, שמקביל לזווית שאנחנו רוצים למדוד (ציור).
+-    נגדיר גם זווית מרחבית, זווית בתלת ממד: עבור שטח מסויים, ניקח היטל שלו על כדור כלשהו, ואז הזווית המרחבית היא השטח של ההיטל, חלקי המרחק בריבוע ממרכז הכדור. (ציור)
+-    הזווית המרחבית של שטח אינפיניטסימלי היא:
+-    $ dif(Omega) = dif(a)/R^2 = sin(theta) dif(theta) dif(phi) $ (זה לא נכון לשטח לא אינפיניטיסימלי, כי יש איבר של $cos(theta)$ בגלל שההטלה מעוותת את השטח של המישור)
+-    אם נחבר את זה להגדרת השטף, קיבלנו:
+-    $ dif(Phi) = k q dif(Omega) $
+-    $ Phi = k q integral dif(Omega) $
+-    $ = 4 pi k q = q/(epsilon_0) $
+-]
++==== זווית מרחבית
++אנחנו לא באמת יודעים למדוד זווית. אנחנו פשוט מודדים *אורך* של חלק ממעגל יחידה, שמקביל לזווית שאנחנו רוצים למדוד. אורך הקשת $s$ שווה לזווית $theta$ ברדיאנים:
++
++#align(center, canvas(length: 2cm, {
++  import draw: *
++  let a0 = 10deg
++  let th = 55deg
++  // מעגל היחידה והזווית theta בין שתי קרניים
++  circle((0, 0), radius: 1)
++  line((0, 0), (calc.cos(a0), calc.sin(a0)))
++  line((0, 0), (calc.cos(a0 + th), calc.sin(a0 + th)))
++  // הקשת שנחתכת, באורך s, מודגשת
++  line(..range(12).map(i => {
++    let t = a0 + i * th / 11
++    (calc.cos(t), calc.sin(t))
++  }), stroke: 1.5pt)
++  // קשת קטנה שמסמנת את הזווית
++  line(..range(12).map(i => {
++    let t = a0 + i * th / 11
++    (0.3 * calc.cos(t), 0.3 * calc.sin(t))
++  }))
++  content((0.58 * calc.cos(a0 + th / 2), 0.58 * calc.sin(a0 + th / 2)), $theta$)
++  content((1.15 * calc.cos(a0 + th / 2), 1.15 * calc.sin(a0 + th / 2)), $s$)
++  content((0.5 * calc.cos(a0), 0.5 * calc.sin(a0)), $1$, anchor: "north", padding: 3pt)
++  circle((0, 0), radius: 0.03, fill: black)
++}))
++
++נגדיר גם זווית מרחבית, זווית בתלת ממד: עבור שטח מסויים, ניקח היטל שלו על כדור שמרכזו בנקודת המבט, ואז הזווית המרחבית $Omega$ היא השטח של ההיטל, חלקי רדיוס הכדור בריבוע:
++
++#align(center, canvas({
++  import draw: *
++  let lo = -7deg
++  let hi = 37deg
++  let mid = 15deg
++  // המשטח המקורי, על הקרניים בקצוות החרוט
++  let p1 = (3.4 * calc.cos(lo), 3.4 * calc.sin(lo))
++  let p2 = (4.2 * calc.cos(hi), 4.2 * calc.sin(hi))
++  // הכדור סביב נקודת המבט
++  circle((0, 0), radius: 2)
++  circle((0, 0), radius: 0.05, fill: black)
++  line((0, 0), p1)
++  line((0, 0), p2)
++  line(p1, p2, stroke: 1.5pt)
++  content(p2, $Sigma$, anchor: "south-west", padding: 4pt)
++  // ההיטל על הכדור, מודגש
++  line(..range(12).map(i => {
++    let t = lo + i * (hi - lo) / 11
++    (2 * calc.cos(t), 2 * calc.sin(t))
++  }), stroke: 1.5pt)
++  content((1.4 * calc.cos(mid), 1.4 * calc.sin(mid)), $Omega$)
++  // רדיוס הכדור
++  line((0, 0), (2 * calc.cos(200deg), 2 * calc.sin(200deg)), stroke: (dash: "dashed"))
++  content((calc.cos(200deg), calc.sin(200deg)), $R$, anchor: "south", padding: 3pt)
++}))
++
++הזווית המרחבית של שטח אינפיניטסימלי היא:
++$ dif(Omega) = dif(a)/R^2 = sin(theta) dif(theta) dif(phi) $
++כאן $dif(a)$ הוא אלמנט שטח על הכדור, ניצב לכיוון הרדיאלי. אלמנט שטח שטוח $dif(A)$ במרחק $r$ מהמרכז, שהניצב שלו בזווית $alpha$ מהכיוון הרדיאלי, תופס זווית מרחבית $dif(Omega) = (dif(A) cos(alpha))/r^2$, כי ההטלה על הכדור מקטינה את השטח פי $cos(alpha)$.
++אם נחבר את זה להגדרת השטף, על ספירה סביב המטען, שם $arrow(E) dot dif(arrow(a)) = (k q)/R^2 dif(a)$, קיבלנו:
++$ dif(Phi) = k q dif(Omega) $
++$ Phi = k q integral dif(Omega) $
++$ = 4 pi k q = q/(epsilon_0) $
