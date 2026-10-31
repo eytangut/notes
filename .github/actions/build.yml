@@ -1,0 +1,234 @@
+name: Build lecture PDFs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.typ'
+      - 'dirs.txt'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+    inputs:
+      dirs:
+        description: 'Directory names, comma-separated (empty = use dirs.txt)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: typst-community/setup-typst@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/typst
+          key: typst-${{ runner.os }}-${{ hashFiles('**/*.typ') }}
+          restore-keys: |
+            typst-${{ runner.os }}-
+
+      - name: Build PDFs and pages
+        env:
+          DIRS_INPUT: ${{ inputs.dirs }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          WORK="$RUNNER_TEMP/work"
+          mkdir -p "$WORK" _pdf _site
+          export OUT="$PWD/_pdf" ROOT="$PWD"
+
+          # ---------- 1. Directory list ----------
+          {
+            if [ -n "${DIRS_INPUT//[[:space:]]/}" ]; then
+              printf '%s\n' "$DIRS_INPUT" | tr ',' '\n'
+            else
+              [ -f dirs.txt ] || { echo "::error::No dirs.txt and no input given"; exit 1; }
+              cat dirs.txt
+            fi
+          } | tr -d '\r' \
+            | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's#/*$##' \
+            | awk 'NF && !s[$0]++' > "$WORK/dirs.list"
+
+          [ -s "$WORK/dirs.list" ] || { echo "::error::Directory list is empty"; exit 1; }
+
+          # ---------- 2. Slug -> directory mapping ----------
+          declare -A seen
+          : > "$WORK/mapping.tsv"
+          while IFS= read -r dir; do
+            slug=$(printf '%s' "$dir" | LC_ALL=C tr 'A-Z' 'a-z' | LC_ALL=C tr -cs 'a-z0-9' '-' | sed -e 's/^-*//' -e 's/-*$//')
+            hash=$(printf '%s' "$dir" | sha1sum | cut -c1-8)
+            [ -n "$slug" ] || slug="$hash"
+            if [ -n "${seen[$slug]:-}" ]; then slug="$slug-$hash"; fi
+            seen[$slug]=1
+            printf '%s\t%s\n' "$slug" "$dir" >> "$WORK/mapping.tsv"
+          done < "$WORK/dirs.list"
+
+          # ---------- 3. Per-directory worker ----------
+          WORKER="$RUNNER_TEMP/build_one.sh"
+          cat > "$WORKER" <<'WORKER_EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          shopt -s nullglob
+          IFS=$'\t' read -r slug dir <<< "$1"
+
+          [ -d "$dir" ] || { echo "::error::Directory not found: $dir"; exit 1; }
+
+          files=("$dir"/lect[0-9]*.typ)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "::error::No lect<n>.typ files in: $dir"
+            exit 1
+          fi
+          mapfile -d '' -t sorted < <(printf '%s\0' "${files[@]}" | sort -zV)
+
+          if [ ! -f "$dir/global.typ" ]; then
+            echo "::warning::No global.typ in: $dir"
+          fi
+
+          combined="$dir/_combined.typ"
+          {
+            if [ -f "$dir/global.typ" ]; then
+              cat -- "$dir/global.typ"
+              printf '\n'
+            fi
+            for f in "${sorted[@]}"; do
+              n=$(grep -n -m1 -E '^[[:space:]]*// END preamble[[:space:]]*$' -- "$f" | cut -d: -f1 || true)
+              if [ -n "$n" ]; then
+                tail -n +"$((n + 1))" -- "$f"
+              else
+                cat -- "$f"
+              fi
+              printf '\n'
+            done
+          } > "$combined"
+
+          fontargs=()
+          if [ -d "$ROOT/fonts" ]; then
+            fontargs=(--font-path "$ROOT/fonts")
+          fi
+
+          # One retry: parallel runs may race on first download of a Universe package.
+          if ! typst compile "${fontargs[@]}" "$combined" "$OUT/$slug.pdf"; then
+            typst compile "${fontargs[@]}" "$combined" "$OUT/$slug.pdf"
+          fi
+          WORKER_EOF
+          chmod +x "$WORKER"
+
+          # ---------- 4. Compile in parallel (any failure fails the step) ----------
+          xargs -r -d '\n' -n1 -P "$(nproc)" "$WORKER" < "$WORK/mapping.tsv"
+
+          # ---------- 5. HTML pages ----------
+          esc() {
+            printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/\&quot;/g' -e "s/'/\&#39;/g"
+          }
+
+          STYLE='
+          :root{color-scheme:light dark;--bg:#fff;--fg:#111;--card:#eef0f3;--hover:#e1e4e9}
+          @media (prefers-color-scheme:dark){:root{--bg:#111316;--fg:#eee;--card:#1e2126;--hover:#2a2e35}}
+          *{box-sizing:border-box}
+          body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--fg);font:1.25rem/1.4 system-ui,sans-serif}
+          main{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:1.5rem;width:100%;max-width:32rem;text-align:center}
+          a{color:inherit;text-decoration:none}
+          .icon{display:flex;align-items:center;justify-content:center;min-width:8rem;min-height:8rem;border-radius:1.5rem;background:var(--card)}
+          .icon:hover,.row:hover{background:var(--hover)}
+          .row{display:flex;align-items:center;gap:1rem;width:100%;min-height:4.5rem;padding:1rem 1.25rem;border-radius:1rem;background:var(--card)}
+          .row span{flex:1;text-align:start;overflow-wrap:anywhere}
+          h1{margin:0;font-size:1.5rem;font-weight:600;overflow-wrap:anywhere}
+          svg{flex:none}
+          '
+
+          ICON_DOWNLOAD='<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>'
+          ICON_FILE='<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>'
+
+          ROWS=''
+          while IFS=$'\t' read -r slug dir; do
+            name_html=$(esc "$dir")
+            pdf_url="https://github.com/${REPO}/releases/latest/download/${slug}.pdf"
+            enc=$(printf '%s' "$dir" | jq -sRr @uri)
+
+            mkdir -p "_site/$dir"
+            cat > "_site/$dir/index.html" <<HTML_EOF
+          <!doctype html>
+          <html>
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>${name_html}</title>
+          <style>${STYLE}</style>
+          </head>
+          <body>
+          <main>
+          <a class="icon" href="${pdf_url}" aria-label="${name_html}">${ICON_DOWNLOAD}</a>
+          <h1 dir="auto">${name_html}</h1>
+          </main>
+          </body>
+          </html>
+          HTML_EOF
+
+            ROWS+="<a class=\"row\" href=\"${enc}/index.html\">${ICON_FILE}<span dir=\"auto\">${name_html}</span></a>"$'\n'
+          done < "$WORK/mapping.tsv"
+
+          cat > _site/index.html <<HTML_EOF
+          <!doctype html>
+          <html>
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>${STYLE}</style>
+          </head>
+          <body>
+          <main>
+          ${ROWS}</main>
+          </body>
+          </html>
+          HTML_EOF
+
+      - name: Release notes
+        run: |
+          set -euo pipefail
+          PREV=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          if [ -n "$PREV" ]; then
+            git log --pretty='- %s' "$PREV"..HEAD > notes.md
+          else
+            git log --pretty='- %s' > notes.md
+          fi
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: build-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          body_path: notes.md
+          files: _pdf/*.pdf
+          make_latest: 'true'
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
