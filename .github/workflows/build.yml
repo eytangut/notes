@@ -110,6 +110,14 @@ jobs:
             if [ -f "$dir/global.typ" ]; then
               cat -- "$dir/global.typ"
               printf '\n'
+            else
+              # Keep the first lecture's preamble when there is no directory
+              # global. It may contain imports that are needed by all lectures.
+              n=$(grep -n -m1 -E '^[[:space:]]*// END preamble[[:space:]]*$' -- "${sorted[0]}" | cut -d: -f1 || true)
+              if [ -n "$n" ]; then
+                head -n "$n" -- "${sorted[0]}"
+                printf '\n'
+              fi
             fi
             for f in "${sorted[@]}"; do
               n=$(grep -n -m1 -E '^[[:space:]]*// END preamble[[:space:]]*$' -- "$f" | cut -d: -f1 || true)
