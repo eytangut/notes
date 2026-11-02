@@ -20,11 +20,16 @@
 // === חוק אמפר
 // == מבוא לאלקטרומגנטיות
 // === חוק פאראדיי
+#todo[
+    Add a cover page, which contains all of the figures used (Or, if there is a absurd number, a random subset, but aim for it to work with big yet normal numbers without looking horrible), randomly rotated and scaled and colored (Use a random number generator seeded with the data, as this is the only entropy in Typst). The figures should all be faded to make the text on the cover page readable. They may be non-uniformaly faded, to blend with each other.
+]
 = חשמל ומגנטיות
 == אלקטרוסטטיקה
 === חוק קולון
 ==== חזרה על השיעור הקודם
-
+#todo[
+    Refactor all figures to a differant files, and reference them here, to avoid mess.
+]
 חוק קולון, השדה של מטען נקודתי $q$ בראשית הצירים:
 
 $ arrow(E)(arrow(r)) = k q/(r^2) hat(r) quad quad k = 1/(4 pi epsilon_0) $
@@ -126,6 +131,9 @@ $ = 2/(z^2) quad quad (z > R) $
 $ arrow(E)(z) = k sigma R^2 2 pi dot 2/(z^2) hat(z) = (k hl(4 pi R^2 sigma))/(z^2) hat(z) quad quad z > R $
 
 אז אם אתה בתוך המעטפת, השדה לא משפיע עליך, ואם אתה בחוץ, השדה משפיע עליך כאילו כל המטען מרוכז בנקודה יחידה באמצע הכדור.
+#todo[
+    Add a illustration here.
+]
 ניוטון גילה שהעובדה הזו נכונה לשדה כבידתי, לפני שגילו אותה על שדה חשמלי. הוא גם הראה שבתוך מעטפת ספרואידית (Spheroid) השדה מתאפס, לא רק בתוך כדור מושלם.
 
 ==== תרגיל: שדה של דיסקה
@@ -153,7 +161,9 @@ $ arrow(E)(z) = k sigma R^2 2 pi dot 2/(z^2) hat(z) = (k hl(4 pi R^2 sigma))/(z^
 ==== קווי שדה
 
 מטען נקודתי בראשית הצירים. על כל עיגול סביבו, שמסמן מרחק קבוע מהמטען, החצים מצביעים החוצה ומסמנים את השדה החשמלי. בגלל שגודל השדה יורד כמו $1/r^2$, החצים הולכים וקטנים כשעוברים בין העיגולים:
-
+#todo[
+    The illustration beloew is pretty good, but it can be pretty confusing and misleading from the way it is displayed, as the arrows can be confused. Make it clearer.
+]
 #align(center, canvas(length: 0.9cm, {
   import draw: *
   // עיגולים במרחקים 1, 1.8, 2.8 מהמטען
@@ -249,7 +259,9 @@ $ Phi = integral_Sigma arrow(E) dot dif(arrow(a)) $
 }))
 
 כשהשדה נכנס ליריעה (נגד האוריינטציה שנבחרה) יש עליה שטף שלילי. כשהוא יוצא (עם האוריינטציה) יש עליה שטף חיובי:
-
+#todo[
+    The illustration below is great, but the idea is to have a non-convex 3d shape, so that when the field passes through it, it enters and exits more then once, but they cancel out. Make a way for this to be visually clear in this visual (Without needing a magnifying glass to understand it).
+]
 #align(center, canvas(length: 0.9cm, {
   import draw: *
   // משמאל שדה נגד האוריינטציה, מימין שדה עם האוריינטציה (s = כיוון החצים ביחס ל-n)
@@ -330,7 +342,9 @@ $ Phi = integral_0 ^(2pi) integral_0 ^pi k q sin(theta) dif(theta) dif(phi) = q 
 }))
 
 נגדיר גם זווית מרחבית, זווית בתלת ממד: עבור שטח מסויים, ניקח היטל שלו על כדור שמרכזו בנקודת המבט, ואז הזווית המרחבית $Omega$ היא השטח של ההיטל, חלקי רדיוס הכדור בריבוע:
-
+#todo[
+    Make the figure below 3d. This is supposed to be a *Spatial* derivative.
+]
 #align(center, canvas({
   import draw: *
   let lo = -7deg
@@ -360,7 +374,26 @@ $ Phi = integral_0 ^(2pi) integral_0 ^pi k q sin(theta) dif(theta) dif(phi) = q 
 הזווית המרחבית של שטח אינפיניטסימלי היא:
 $ dif(Omega) = dif(a)/R^2 = sin(theta) dif(theta) dif(phi) $
 כאן $dif(a)$ הוא אלמנט שטח על הכדור, ניצב לכיוון הרדיאלי. אלמנט שטח שטוח $dif(A)$ במרחק $r$ מהמרכז, שהניצב שלו בזווית $alpha$ מהכיוון הרדיאלי, תופס זווית מרחבית $dif(Omega) = (dif(A) cos(alpha))/r^2$, כי ההטלה על הכדור מקטינה את השטח פי $cos(alpha)$.
+#todo[
+    Add a visual here.
+]
 אם נחבר את זה להגדרת השטף, על ספירה סביב המטען, שם $arrow(E) dot dif(arrow(a)) = (k q)/R^2 dif(a)$, קיבלנו:
 $ dif(Phi) = k q dif(Omega) $
 $ Phi = k q integral dif(Omega) $
 $ = 4 pi k q = q/(epsilon_0) $
+#todo[
+    $ Phi = integral (k integral (dif(q') (arrow(r) - arrow(r')))/(|arrow(r) - arrow(r')|^3)) dot arrow(dif(a)) $
+    $ = k integral dif(q') (integral (arrow(r) - arrow(r'))/(|arrow(r) - arrow(r')|^3) dot arrow(dif(a))) $
+    $ = k integral dif(q') integral dif(Omega) $
+    $ = 1/epsilon_0 integral dif(q') = (q_("enc"))/(epsilon_0) $
+    חוק גאוס:
+    $ integral.cont arrow(E) dot arrow(dif(a)) = 1/(epsilon_0) integral rho dif("Vol") $
+    משפט גאוס:
+    $ integral.cont arrow(E) dot arrow(dif(a)) = integral (nabla dot arrow(E)) dif("Vol") $
+    $ nabla dot arrow(E) (arrow(r)) = lim_(Delta V -> 0) 1/(Delta V) integral.cont arrow(E) dot arrow(dif(a)) $
+    $ integral (nabla dot arrow(E) - 1/(epsilon_0) rho) dif("Vol") = 0 $
+    דיברגנץ:
+    $ div arrow(F) = (partial F_x)/(partial x) + (partial F_y)/(partial y) + (partial F_z)/(partial z) $
+    $ div arrow(r) = 3 $
+    
+]
