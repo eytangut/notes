@@ -299,3 +299,34 @@ $ S_1 + S_2 = {v_1 + v_2 whe v_1 in S_1, v_2 in S_2} $
 #todo[
     Make this a clickable reference. Also the table of contents clickable while I'm at it.
 ]
+= העתקות ליניאריות
+#definition[
+    יהיו $V,W$ מ"ו מעל שדה $F$.
+
+    פונקציה $T: V -> W$ נקראת *העתקה לינארית*#footnote[לפעמים נקראת גם *טרנספורמציה לינארית*.] (ה"ל) כאשר מתקיימים התנאים הבאים:
+    + $ forall v_1, v_2 in V: quad T(v_1 + v_2) = T(v_1) + T(v_2) $
+    + $ forall c in F, quad v in V: quad T(c v) = c T(v)  $
+]
+#env-list(title: "דוגמאות", numbered: true)[
+    #example[
+        יהיו $V,W$ מ"ו מעל $F$. נגדיר $T: V -> W $ ע"י $ T(v) = 0_W$ לכל $v in V$.
+    ]]
+[  #example[
+        יהי $V$ מ"ו מעל $F$. נגדיר $T: V -> V$ ע"י $T(v) = v$ לכל $v in V$. נסמן: $T = id_V$
+]]
+[  #example[
+        תהי $A in M_(m times n) (F)$. נגדיר $T_A : F^n -> F^m$ ע"י $T_A (v) = A v$ לכל $v in F^n$.
+        #proof[
+            נוכיח שהתנאי הראשון מתקיים:
+            יהיו $v_1, v_2 in F^n$. אז:
+            $ T_A (v_1 + v_2) = A (v_1 + v_2) = A v_1 + A v_2 = T(v_1) + T(v_2) $
+        ]
+        #proof[
+            נוכיח שהתנאי השני מתקיים:
+            יהי $v in F^n$, $c in F$. אז:
+            $ T_A (c v) = A (c v) = c (A v) = c T_A (v) $
+        ]
+    ]
+  ]
+#env-list(title: "תכונות", numbered: true)[]
+
