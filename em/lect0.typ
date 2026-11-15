@@ -1,5 +1,5 @@
 #import "preamble.typ": *
-#import "@preview/cetz:0.4.2": canvas, draw
+#import "@preview/cetz:0.5.3": canvas, draw
 #show: setup
 #let dif(x) = $upright(d)#x thin$
 // END preamble
@@ -50,18 +50,18 @@ $ dif(q') = cases(
 
 פתרון התרגיל מהשיעור הקודם: השדה של מעטפת כדור דקה ברדיוס $R$ וצפיפות מטען משטחית אחידה $sigma$, בנקודה $P$ על ציר $z$, במרחק $z$ מהמרכז.
 
-$ dif(q') = sigma R^2 sin(theta) dif(phi) dif(theta) $
+$ dif(q') = sigma R^2 sin(theta) dif(phi.alt) dif(theta) $
 
 ===== הגיאומטריה
 
-ממבט מהצד. הטבעת המנוקדת היא כל הנקודות על המעטפת עם אותו $theta$, ועליה רץ אינטגרל ה-$phi$. $arrow(r)'$ הוא מיקום אלמנט המטען, ו-$P$ היא נקודת השדה, $arrow(r) = z hat(z)$:
+ממבט מהצד. הטבעת המנוקדת היא כל הנקודות על המעטפת עם אותו $theta$, ועליה רץ אינטגרל ה-$phi.alt$. $arrow(r)'$ הוא מיקום אלמנט המטען, ו-$P$ היא נקודת השדה, $arrow(r) = z hat(z)$:
 
 #align(center, canvas({
   import draw: *
   let R = 1.5
   let z = 3.6
   let th = 50deg
-  // הנקודה על המעטפת, ב-phi = 0
+  // הנקודה על המעטפת, ב-phi.alt = 0
   let q = (R * calc.sin(th), R * calc.cos(th))
   // המעטפת, כמו שרואים אותה מהצד
   circle((0, 0), radius: R, stroke: 1.2pt)
@@ -87,18 +87,18 @@ $ dif(q') = sigma R^2 sin(theta) dif(phi) dif(theta) $
   content((0.62 * calc.cos(90deg - th / 2), 0.62 * calc.sin(90deg - th / 2)), $theta$)
 }))
 
-$ arrow(r)' = R sin(theta) cos(phi) hat(x) + R sin(theta) sin(phi) hat(y) + R cos(theta) hat(z) $
+$ arrow(r)' = R sin(theta) cos(phi.alt) hat(x) + R sin(theta) sin(phi.alt) hat(y) + R cos(theta) hat(z) $
 
-$ arrow(r) - arrow(r)' = -R sin(theta) cos(phi) hat(x) - R sin(theta) sin(phi) hat(y) + (z - R cos(theta)) hat(z) $
+$ arrow(r) - arrow(r)' = -R sin(theta) cos(phi.alt) hat(x) - R sin(theta) sin(phi.alt) hat(y) + (z - R cos(theta)) hat(z) $
 
 $ |arrow(r) - arrow(r)'|^3 &= (R^2 sin^2(theta) + z^2 + R^2 cos^2(theta) - 2 z R cos(theta))^(3/2) \
   &= (R^2 + z^2 - 2 z R cos(theta))^(3/2) $
 
 ===== האינטגרל
 
-$ arrow(E)(z) = k integral_0^pi integral_0^(2pi) (sigma R^2 sin(theta) (-R sin(theta) cos(phi) hat(x) - R sin(theta) sin(phi) hat(y) + (z - R cos(theta)) hat(z)))/((R^2 + z^2 - 2 z R cos(theta))^(3/2)) dif(phi) dif(theta) $
+$ arrow(E)(z) = k integral_0^pi integral_0^(2pi) (sigma R^2 sin(theta) (-R sin(theta) cos(phi.alt) hat(x) - R sin(theta) sin(phi.alt) hat(y) + (z - R cos(theta)) hat(z)))/((R^2 + z^2 - 2 z R cos(theta))^(3/2)) dif(phi.alt) dif(theta) $
 
-אינטגרל ה-$phi$ מאפס את רכיבי $hat(x), hat(y)$, ולכן:
+אינטגרל ה-$phi.alt$ מאפס את רכיבי $hat(x), hat(y)$, ולכן:
 
 $ arrow(E)(z) = k sigma R^2 2 pi integral_0^pi (sin(theta) (z - R cos(theta)))/((R^2 + z^2 - 2 z R cos(theta))^(3/2)) dif(theta) hat(z) $
 
@@ -153,7 +153,7 @@ $ arrow(E)(z) = k sigma R^2 2 pi dot 2/(z^2) hat(z) = (k hl(4 pi R^2 sigma))/(z^
 
 ==== תרגיל: שדה של דיסקה
 
-לחשב את השדה החשמלי של דיסקה דקה ברדיוס $R$ וצפיפות מטען משטחית אחידה $sigma$, בנקודה $P$ שמעל מרכז הדיסקה, במרחק $z$ ממנה. בקואורדינטות גליליות אלמנט השטח הוא $dif(a') = r dif(phi) dif(r)$. הגיאומטריה:
+לחשב את השדה החשמלי של דיסקה דקה ברדיוס $R$ וצפיפות מטען משטחית אחידה $sigma$, בנקודה $P$ שמעל מרכז הדיסקה, במרחק $z$ ממנה. בקואורדינטות גליליות אלמנט השטח הוא $dif(a') = r dif(phi.alt) dif(r)$. הגיאומטריה:
 
 #align(center, canvas({
   import draw: *
@@ -207,7 +207,7 @@ $ arrow(E)(z) = k sigma R^2 2 pi dot 2/(z^2) hat(z) = (k hl(4 pi R^2 sigma))/(z^
   ((x + 1) / d1 - (x - 1) / d2, y / d1 - y / d2)
 }
 
-// קו שדה שיוצא מהמטען החיובי בזווית phi, מחושב בצעדים קטנים לאורך כיוון השדה
+// קו שדה שיוצא מהמטען החיובי בזווית phi.alt, מחושב בצעדים קטנים לאורך כיוון השדה
 #let dip-line(phi) = {
   let p = (-1 + 0.15 * calc.cos(phi), 0.15 * calc.sin(phi))
   let pts = (p,)
@@ -265,15 +265,15 @@ $ arrow(E)(z) = k sigma R^2 2 pi dot 2/(z^2) hat(z) = (k hl(4 pi R^2 sigma))/(z^
   content((2, 2.3), $arrow(A)$, anchor: "south", padding: 3pt)
 }))
 
-השטף של שדה חשמלי $arrow(E)$ דרך משטח שטוח, כשהשדה אחיד עליו, הוא $Phi = arrow(E) dot arrow(A)$. בכלל, את המשטח $Sigma$ מחלקים לאלמנטים קטנים, $dif(arrow(a)) = hat(n) dif(a)$, ומסכמים:
+השטף של שדה חשמלי $arrow(E)$ דרך משטח שטוח, כשהשדה אחיד עליו, הוא $phi.alt = arrow(E) dot arrow(A)$. בכלל, את המשטח $Sigma$ מחלקים לאלמנטים קטנים, $dif(arrow(a)) = hat(n) dif(a)$, ומסכמים:
 
-$ Phi = integral_Sigma arrow(E) dot dif(arrow(a)) $
+$ phi.alt = integral_Sigma arrow(E) dot dif(arrow(a)) $
 
 כשהשדה יוצא דרך המשטח (עם האוריינטציה שנבחרה) השטף חיובי, וכשהוא נכנס (נגד האוריינטציה) השטף שלילי:
 #align(center, canvas(length: 0.9cm, {
   import draw: *
   // משמאל שדה נגד האוריינטציה, מימין שדה עם האוריינטציה (s = כיוון החצים ביחס ל-n)
-  for (dx, s, lab) in ((0, -1, $Phi < 0$), (5, 1, $Phi > 0$)) {
+  for (dx, s, lab) in ((0, -1, $phi.alt < 0$), (5, 1, $phi.alt > 0$)) {
     line((dx, 0), (dx + 3, 0), (dx + 4, 1), (dx + 1, 1), close: true, fill: luma(230))
     for x in (1.2, 2, 2.8) {
       line((dx + x, 0.5 - 1.5 * s), (dx + x, 0.5 + 1.5 * s), mark: (end: ">", fill: black))
@@ -311,13 +311,13 @@ $ Phi = integral_Sigma arrow(E) dot dif(arrow(a)) $
 
 עבור ספירה ברדיוס $R$ סביב מטען $q$ במרכזה, עם אוריינטציה החוצה:
 
-$ dif(arrow(a)) = R^2 sin(theta) dif(theta) dif(phi) hat(r) $
+$ dif(arrow(a)) = R^2 sin(theta) dif(theta) dif(phi.alt) hat(r) $
 
-על הספירה $arrow(E) = (k q)/R^2 hat(r)$, ולכן $arrow(E) dot dif(arrow(a)) = k q sin(theta) dif(theta) dif(phi)$ והשטף הוא
+על הספירה $arrow(E) = (k q)/R^2 hat(r)$, ולכן $arrow(E) dot dif(arrow(a)) = k q sin(theta) dif(theta) dif(phi.alt)$ והשטף הוא
 
-$ Phi = integral_0 ^(2pi) integral_0 ^pi k q sin(theta) dif(theta) dif(phi) = 4 pi k q = q / epsilon_0 $
+$ phi.alt = integral_0 ^(2pi) integral_0 ^pi k q sin(theta) dif(theta) dif(phi.alt) = 4 pi k q = q / epsilon_0 $
 
-התוצאה לא תלויה ב-$R$. גם אם נקיף את הספירה במשטח סגור אחר, השטף דרכו יהיה זהה: אין מטען בין שני המשטחים, ולכן קווי השדה לא מתחילים ולא נגמרים שם, וכל קו שיוצא דרך הספירה חוצה גם את המשטח החיצוני. בשניהם $Phi = q/epsilon_0$, כל עוד המטען הכלוא הוא $q$ (הוכחה מדויקת יותר, בעזרת זווית מרחבית, בהמשך):
+התוצאה לא תלויה ב-$R$. גם אם נקיף את הספירה במשטח סגור אחר, השטף דרכו יהיה זהה: אין מטען בין שני המשטחים, ולכן קווי השדה לא מתחילים ולא נגמרים שם, וכל קו שיוצא דרך הספירה חוצה גם את המשטח החיצוני. בשניהם $phi.alt = q/epsilon_0$, כל עוד המטען הכלוא הוא $q$ (הוכחה מדויקת יותר, בעזרת זווית מרחבית, בהמשך):
 
 #align(center, canvas(length: 0.8cm, {
   import draw: *
@@ -416,8 +416,8 @@ $ Phi = integral_0 ^(2pi) integral_0 ^pi k q sin(theta) dif(theta) dif(phi) = 4 
   content(((rp.at(0)) / 2, (rp.at(1)) / 2), $R$, anchor: "south", padding: 3pt)
 }))
 
-על הכדור, אלמנט שטח $dif(a) = R^2 sin(theta) dif(theta) dif(phi)$ תופס זווית מרחבית:
-$ dif(Omega) = dif(a)/R^2 = sin(theta) dif(theta) dif(phi) $
+על הכדור, אלמנט שטח $dif(a) = R^2 sin(theta) dif(theta) dif(phi.alt)$ תופס זווית מרחבית:
+$ dif(Omega) = dif(a)/R^2 = sin(theta) dif(theta) dif(phi.alt) $
 אלמנט שטח שטוח $dif(a)$ במרחק $r$ מ-$O$, שהנורמל שלו $hat(n)$ יוצר זווית $alpha$ עם הכיוון הרדיאלי, תופס זווית מרחבית שנקבעת לפי ההיטל שלו הניצב לכיוון הרדיאלי, ששטחו $dif(a) cos(alpha)$:
 $ dif(Omega) = (dif(a) cos(alpha))/r^2 $
 
@@ -453,19 +453,19 @@ $ dif(Omega) = (dif(a) cos(alpha))/r^2 $
 }))
 
 נחבר את זה להגדרת השטף. השדה של מטען נקודתי $q$ הוא $arrow(E) = (k q)/r^2 hat(r)$, ולכן $arrow(E) dot dif(arrow(a)) = (k q)/r^2 cos(alpha) dif(a)$, כלומר:
-$ dif(Phi) = k q dif(Omega) $
+$ dif(phi.alt) = k q dif(Omega) $
 אם המשטח $Sigma$ סגור ומקיף את המטען, הוא תופס את כל הכיוונים ממנו, ולכן $integral.cont dif(Omega) = 4 pi$, כמו בספירה. קרן שיוצאת מהמטען חוצה את המשטח פעם אחת נטו, כי חציות נוספות באות בזוגות ומתבטלות בגלל הסימן של $cos(alpha)$ (זו הזווית ה"חתומה"). לכן:
-$ Phi = k q integral.cont dif(Omega) = 4 pi k q = q/epsilon_0 $
+$ phi.alt = k q integral.cont dif(Omega) = 4 pi k q = q/epsilon_0 $
 
 ==== חוק גאוס והדיברגנץ
 
 נסמן ב-$Sigma$ מעטפת סגורה, ב-$V$ את הנפח שהיא סוגרת, וב-$q_("enc")$ את המטען שבתוכה. לפי חוק קולון, כל אלמנט מטען $dif(q')$ תורם לשטף דרך המעטפת:
 
-$ dif(Phi) = k dif(q') integral.cont ((arrow(r) - arrow(r)') dot dif(arrow(a)))/(|arrow(r) - arrow(r)'|^3) $
+$ dif(phi.alt) = k dif(q') integral.cont ((arrow(r) - arrow(r)') dot dif(arrow(a)))/(|arrow(r) - arrow(r)'|^3) $
 
 האינטגרל הפנימי הוא הזווית המרחבית החתומה שהמעטפת תופסת מנקודת המטען: הוא $4 pi$ אם המטען בפנים ואפס אם הוא בחוץ. לכן, בסכימה על כל אלמנטי המטען, המטענים שמחוץ למעטפת אינם תורמים לשטף הכולל, ומתקבל:
 
-$ Phi = integral.cont arrow(E) dot dif(arrow(a)) = 4 pi k q_("enc") = q_("enc")/epsilon_0 = 1/(epsilon_0) integral_V rho dif("Vol") $
+$ phi.alt = integral.cont arrow(E) dot dif(arrow(a)) = 4 pi k q_("enc") = q_("enc")/epsilon_0 = 1/(epsilon_0) integral_V rho dif("Vol") $
 
 זוהי הצורה האינטגרלית של חוק גאוס. את הצורה המקומית נקבל בעזרת הדיברגנץ. לשדה $arrow(F) = F_x hat(x) + F_y hat(y) + F_z hat(z)$:
 
@@ -553,7 +553,34 @@ $ nabla dot arrow(E) = rho/epsilon_0 $
 ]
 #todo[
     $ arrow(E) (arrow(r)) = -1/(4 pi epsilon_0) integral dif(q') nabla(1/(|arrow(r) - arrow(r)'|)) $
-    $ = - nabla underbrace((1/(4 pi epsilon_0) integral (dif(q'))/(|arrow(r) - arrow(r)'|)), Phi(arrow(r))) $
-    ל - $Phi(arrow(r))$ נקרא *הפוטנציאל* של השדה.
-    $ arrow(E) (arrow(r)) = - nabla (Phi(arrow(r)) + c) $
+    $ = - nabla underbrace((1/(4 pi epsilon_0) integral (dif(q'))/(|arrow(r) - arrow(r)'|)), phi.alt(arrow(r))) $
+    ל - $phi.alt(arrow(r))$ נקרא *הפוטנציאל* של השדה.
+    $ arrow(E) (arrow(r)) = - nabla (phi.alt(arrow(r)) + c) $
+    $ phi.alt(arrow(r)) = i integral_infinity ^arrow(r) arrow(E) dot arrow(dif(l)) $
+    $ U = cases(
+    1/2 epsilon_0 integral |arrow(E)|^2 dif("Vol"),
+    1/2 integral rho phi.alt dif("Vol")
+    )  $
+    #exercise[
+        יהי כדור מלא בעל רדיוס $R$. נעשה בו חלל בצורת כדור שקוטרו $R$, שאמצעו נמצא באמצע הדרך בין אמצע הכדור לקצהו. חשבו את השדה בתוך כל אחד משלושת החללים שנוצרים, את הפוטנציאל, ואת האנרגיה.
+    ]
+    ==== מוליכים (אידיאלים)
+    מוליך לא יכול להחזיק את המטענים החופשיים שבתוכו במקום כאשר מפעילים שדה חשמלי (שונה מ - 0).
+        + בתוך המוליך, $arrow(E) = 0$ (ממש בתוך, לא על הקצה).
+        + לאורך כל המוליך (כולל השפה), $phi.alt = "const"$.
+        + בתוך המוליך, $rho = 0$.
+        + כל המטען העודף נמצא בשפת המוליך.
+        + בשפת המוליך, $arrow(E)$ ניצב לשפה.
+    סכום הנגזרות השניות המרחביות נקרא *לפלסיאן*. לדוגמא:
+    $ nabla^2 phi.alt = -1/(epsilon_0) rho $
+    זו משוואת פואסון.
+    משוואת לפלס:
+    $ nabla^2 phi.alt = 0 $
+
+    $ integral.cont arrow(E) arrow(dif(a)) = - integral nabla^2 phi.alt dif("Vol") = - integral nabla^2 (q/(4 pi epsilon_0) 1/r) dif("Vol") = cases(
+    0 comma quad quad arrow(r) != 0,
+    quad
+    ) $
+    $ integral nabla^2 phi.alt dif("Vol") = - q/(epsilon_0) $
+    
 ]
