@@ -491,7 +491,7 @@
 #let bcs(ref-body, size: 0.7em) = {
   $limits(=)_(#text(size: size, ref-body))$
 }
-
+#let dif(x) = $upright(d)#x thin$
 
 // =============================================================================
 //  [SETUP] Document-wide rules.  Apply in each file with:  #show: setup
