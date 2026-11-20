@@ -138,6 +138,26 @@
   )),
 )
 
+// -----------------------------------------------------------------------------
+// Box fragmentation.
+// showybox boxes are unbreakable by default, so a box taller than a page runs
+// off the bottom of it and the rest is cut off. `flex-box` makes every box
+// breakable, but still keeps a SHORT box (up to `box-keep-fraction` of the text
+// height) in one piece, so small boxes never split or leave a lone title behind.
+// Every showybox call below goes through it.
+// -----------------------------------------------------------------------------
+#let box-keep-fraction = 25%
+
+#let flex-box(..args) = layout(size => {
+  let built = showybox(breakable: true, ..args)
+  let natural = measure(width: size.width, built).height
+  if natural <= size.height * box-keep-fraction {
+    block(breakable: false, width: 100%, built)
+  } else {
+    built
+  }
+})
+
 // Visual style of a numbered environment.
 #let showy-frame-style(title, tags, body, supplement, number, accent-color) = {
   let cnt = env-counters-by-supplement.at(supplement-key(supplement))
@@ -149,7 +169,7 @@
         let label = [#supplement #section-number.#type-number]
         let has-title = title != none and title != []
 
-        showybox(
+        flex-box(
           frame: (
             border-color: accent-color.darken(30%),
             title-color: accent-color.lighten(40%),
@@ -214,7 +234,7 @@
 // =============================================================================
 
 // Shared builder for titled, coloured boxes.
-#let titled-box(accent, title, body) = showybox(
+#let titled-box(accent, title, body) = flex-box(
   frame: (
     border-color: accent.darken(20%),
     title-color: accent.lighten(60%),
@@ -230,7 +250,7 @@
 #let example(title: "דוגמה", body) = titled-box(green, title, body)
 #let todo(title: "TODO", body) = titled-box(orange, title, body)
 
-#let informal(body) = showybox(
+#let informal(body) = flex-box(
   frame: (
     border-color: gray.darken(10%),
     body-color: gray.lighten(80%),
@@ -239,7 +259,7 @@
   body,
 )
 
-#let proof(body) = showybox(
+#let proof(body) = flex-box(
   frame: (
     border-color: black,
     title-color: white,
@@ -538,6 +558,19 @@
     ref-chip(el.location(), display)
   }
 
+  // --- Display equations ----------------------------------------------------
+  // A display equation wider than the text (long row-reduction chains, etc.)
+  // would run out of its box and off the page. Scale just those down to fit;
+  // anything that already fits is left untouched.
+  show math.equation.where(block: true): it => context layout(size => {
+    let w = measure(it).width
+    if w > size.width + 0.5pt {
+      block(width: 100%, scale(size.width / w * 100%, reflow: true, box(width: w, it)))
+    } else {
+      it
+    }
+  })
+
   doc
 }
 
@@ -589,7 +622,7 @@
 
 // Solution box, deliberately lighter than `proof`: thin grey frame, small
 // grey title, no end-of-proof square.
-#let solution(body) = showybox(
+#let solution(body) = flex-box(
   frame: (
     border-color: gray,
     title-color: gray.lighten(85%),
