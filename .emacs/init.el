@@ -93,7 +93,6 @@
 (when load-file-name
   (add-to-list 'load-path (file-name-directory (file-truename load-file-name))))
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
-(add-to-list 'load-path user-emacs-directory)
 
 ;; DESKTOP: programs installed with cargo / pip --user (typst, tinymist,
 ;; typstyle) live in these folders, which Emacs does not see when it was not
