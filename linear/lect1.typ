@@ -1,4 +1,5 @@
 #import "preamble.typ": *
+#import "@preview/fletcher:0.6.0" as fletcher: diagram, node, edge
 #show: setup
 #let def = definition
 #let prop = proposition
@@ -14,8 +15,7 @@
 == בסיס של מרחב וקטורי
 #definition[
 יהי $V$ מ"ו מעל $F$. סדרה $(v_1, doh, v_n)$ של וקטורים מ - $V$ נקראת *פורשת* כאשר $"Span"(v_1, doh, v_n) = V$.
-סדרה $(v_1, doh, v_n)$ של וקטורים מ - $V$ נקראת *בלתי תלויה ליניארית* (בת"ל) כאשר היא לא ת"ל.
-סדרה $(v_1, doh, v_n)$ של וקטורים מ - $V$ נקראת בסיס ($"Basis"$) כאשר היא פורשת ובת"ל.
+סדרה $(v_1, doh, v_n)$ של וקטורים מ - $V$ נקראת *בלתי תלויה ליניארית* (בת"ל) כאשר היא לא ת"ל. סדרה $(v_1, doh, v_n)$ של וקטורים מ - $V$ נקראת בסיס ($"Basis"$) כאשר היא פורשת ובת"ל.
 ]
 #proposition[
     יהי $v_1, doh, v_n in F^m$. נסמן ב - $A in M_(m times n) (F)$ את המטריצה כך שלכל $j in [n]$, העמודה ה - $j$ שלה היא $v_j$. אז $(v_1, doh, v_n)$ היא בסיס של $F^m$ אמ"ם לכל $b in F^m$, לממ"ל $A x = b$ *קיים* פתרון *יחיד*.
@@ -466,4 +466,21 @@ $ S_1 + S_2 = {v_1 + v_2 whe v_1 in S_1, v_2 in S_2} $
     $ = c_1 omega_cal(C) (T(v_1)) + ... + c_n w_cal(C) (T(v_n)) = $
     $ = c_1 [T(v_1)]_cal(C) + ... + c_n [T(v_n)]_cal(C) = $
     $ = mat([T(v_1)]_cal(C),..., [T(v_n)]_cal(C) ) vc = [T]_cal(C) ^cal(B) [v]_cal(B) $
+]
+#informal[
+    נסמן $A = [T]_cal(C) ^cal(B)$. ניתן לייצג את היחס בין כל הטרנספורמציות האלו בעזרת הדיאגרמה הבאה:
+    #let hom = edge.with(in-math: true)
+        
+    #diagram(spacing: 30mm, $
+        V edge(T, "->")
+        edge("d", omega_cal(B), "->", shift: #3pt)
+        edge("d", tau_cal(B), "<-", shift: #(-3pt), label-side: #right)
+            & W
+            edge("d", omega_cal(C), "->", shift: #(-3pt), label-side: #right)
+            edge("d", tau_cal(B), "<-", shift: #3pt) \
+            F^n edge(T_A, "->", label-side: #right) & F^m
+    $)
+]
+#todo[
+    לגמור את הדיאגרמה והחומר שאחריה.
 ]
