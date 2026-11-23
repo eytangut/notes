@@ -401,7 +401,7 @@ $ S_1 + S_2 = {v_1 + v_2 whe v_1 in S_1, v_2 in S_2} $
 #theorem[
     יהיו $V,W$ מ"ו מעל $F$, יהי $(v_1,...,v_n)$ בסיס של $V$, ותהי $(w_1, ..., w_n)$ סדרה של וקטורים מ - $W$. אז קיימת ה"ל $T: V -> W$ יחידה כך ש:
     $ T(v_i) = w_i, quad quad forall i in [n] $
-]
+] <thm-transformations-basis>
 #proof[
     *קיום:*
 
@@ -428,4 +428,42 @@ $ S_1 + S_2 = {v_1 + v_2 whe v_1 in S_1, v_2 in S_2} $
     נגדיר $w_i = T(e_i)$ לכל $i in [n]$. נגדיר $A$ להיות מטריצה כך שהעמודה ה - $i$ שלה היא $w_i$.
     נגדיר $T_A: F^n -> F^m$ ע"י $T_A (v) =  A v$, לכל $v in F^n$. אז לכל $i in [n]$ מתקיים $T(e_i = w_i = A e_i = T_A (e_i))$. לכן לפי המשפט $T = T_A$.
 ]
-
+== מטריצה של העתקה ליניארית
+#definition[
+    יהיו $V,W$ מ"ו נ"ס מעל $F$, $cal(B) = (v_1, ..., v_n)$, $cal(C) = (w_1, ..., w_n)$ בסיסים של $V$ ו - $W$ בהתאמה, ותהי $T: V -> W$ ה"ל. *המטריצה של $T$ ביחס לבסיסים $cal(B)$ ו - $cal(C)$* היא $[T]_cal(C) ^cal(B) in M_(m times n) (F)$, כך שלכל $j in [n]$, העמודה ה - $j$ של $[T]_cal(C) ^cal(B)$ היא $[T(v_j)]_cal(C)$, כלומר:
+    $ [T]_cal(C) ^cal(B) = mat([T(v_1)]_cal(C), ..., [T(v_n)]_cal(C)) $
+]
+#example[
+    תהי $A in M_(m times n) (F)$, $V = F^n$, $W = F^m$, $cal(B) = (e_1, ..., e_n)$, $cal(C) = (e_1, ..., e_m)$. $T_A : F^n -> F^m$ מוגדרת ע"י $T_A (v) = A v$ לכל $v in F^n$. לכל $j in [n]$, נסמן את העמודה ה - $j$ של $A$ ב - $C_j$. אז:
+    $ [T_A]_cal(C) ^cal(B) = mat([T_A (e_1)]_cal(C), ..., [T_A (e_n)]_cal(C)) = $
+    $ = mat([A e_1]_cal(C), ..., [A e_n]_cal(C)) = mat([C_1]_cal(C), ..., [c_n]_cal(C)) = mat(C_1, ..., C_n) = A $
+]
+#proposition[
+    יהיו $V,W$ מ"ו נ"ס מעל $F$, $cal(B), cal(C)$ בסיסים של $V, W$ בהתאמה. $T, T' : V -> W$ ה"ל כך ש - $[T]_cal(C) ^cal^(B) = [T']_cal(C) ^cal(B)$. אז $T = T'$. 
+]
+#proof[
+    נסמן $cal(B) = (v_1, ..., v_n)$. מאחר ש - $[T]_cal(C) ^cal(B) = [T']_cal(C) ^cal(B)$.
+]
+#todo[
+    לגמור את ההוכחה הזו.
+]
+#proposition[
+    יהיו $V,W$ מ"ו נ"ס מעל $F$, $cal(B), cal(C)$ בסיסים של $V, W$ בהתאמה, ותהי $A in M_(m times n) (F)$. אז קיימת ה"ל $T: V -> W$ כך ש - $[T]_cal(C) ^cal(B) = A$.
+]
+#proof[
+    לכל $j in [n]$, נסמן את העמודה ה - $j$ של $A$ ב - $C_j in F^m$. אז קיים $w_j in W$ כך ש - $[w_j]_cal(C) = C_j$. נסמן $cal(B) = (v_1, ..., v_n)$. אז לפי @thm-transformations-basis, קיימת ה"ל $T: V -> W$ כך ש - $T(v_j) = w_j$ לכל $j in [n]$. אז:
+    $ [T]_cal(C) ^cal(B) = ([T(v_1)]_cal(C), ..., [T(v_n)]_cal(C)) = $
+    $ = ([w_1]_cal(C), ..., [w_n]_cal(C)) = (C_1, ..., C_n) = A $
+]
+#theorem[
+    יהיו $V, W$ מ"ו נ"ס מעל $F$, ו - $cal(B), cal(C)$ בסיסים של $V,W$ בהתאמה, $T: V -> W$ ה"ל, $v in V$. אז $[T]_cal(C) ^cb [v]_cb = [T(v)]_cal(C)$.
+]
+#proof[
+    נסמן $cal(B) = (v_1, ..., v_n)$, $[v]_cal(B) = vec(c_1, ..., c_n)$. אז $v = c_1 v_1 + ... + c_n v_n$. אז:
+    $ [T(v)] = omega_cal(C) (T(v)) = (omega_cal(C) compose T) (v) = $
+    $ (omega_cal(C) compose T) (c_1 v_1 + ... + c_n v_n) = $
+    $ = c_1 (omega_cal(C) compose T) (v_1) + ... + c_n (omega_cal(C) compose T)(v_n) = $
+    $ = c_1 omega_cal(C) (T(v_1)) + ... + c_n w_cal(C) (T(v_n)) = $
+    $ = c_1 [T(v_1)]_cal(C) + ... + c_n [T(v_n)]_cal(C) = $
+    $ = mat([T(v_1)]_cal(C),..., [T(v_n)]_cal(C) ) vc = [T]_cal(C) ^cal(B) [v]_cal(B) $
+]
