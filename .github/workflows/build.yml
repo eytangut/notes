@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment_final.outputs.page_url || steps.deployment_retry.outputs.page_url || steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -239,4 +239,24 @@ jobs:
 
       - name: Deploy Pages
         id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before retrying Pages
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 10
+
+      - name: Retry Pages deployment
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before final Pages attempt
+        if: steps.deployment_retry.outcome == 'failure'
+        run: sleep 30
+
+      - name: Final Pages deployment attempt
+        id: deployment_final
+        if: steps.deployment_retry.outcome == 'failure'
         uses: actions/deploy-pages@v4
