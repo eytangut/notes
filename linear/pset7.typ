@@ -177,6 +177,9 @@
     $ U = Span({f, g, h}), quad W = {q in RR^RR whe q(0) = q(1)} $
     מצאו בסיס ל - $UU inter WW$.
 ]
+#solution[
+    
+]
 
 == שאלה 4
 #problem[

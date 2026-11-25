@@ -643,5 +643,6 @@
   *מקרה #label:*
   #pad(right: 1.2em, body)
 ]
-
+#let vc = $vec(c_1, dov, c_n)$
+#let vd = $vec(d_1, dov, d_n)$
 // END preamble
