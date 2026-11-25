@@ -370,7 +370,7 @@ $ S_1 + S_2 = {v_1 + v_2 whe v_1 in S_1, v_2 in S_2} $
 
     נגדיר $omega_cal(B): V -> F^n$ ע"י $omega_cal(B) (v) = [v]_cal(B)$ לכל $v in V$. אז $omega_cal(B)$ איזומורפיזם.
 ]
-#let cb = cal(B)
+#let cb = $cal(B)$
 #proof[
     יהיו $u,v in V$. אז:
     $ omega_cal(B) (u+v) = [u+v]_cal(B) = [u]_cal(B) + [v]_cal(B) = omega_cal(B) (u) + omega_cal(B) (v) $
@@ -484,3 +484,4 @@ $ S_1 + S_2 = {v_1 + v_2 whe v_1 in S_1, v_2 in S_2} $
 #todo[
     לגמור את הדיאגרמה והחומר שאחריה.
 ]
+
