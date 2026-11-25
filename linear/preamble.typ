@@ -74,7 +74,7 @@
 #import "@preview/showybox:2.0.4": showybox
 #import "@preview/pavemat:0.2.0": pavemat
 #import "@preview/lovelace:0.3.1": *
-
+#import "@preview/fletcher:0.6.0" as fletcher: diagram, edge, node
 
 // =============================================================================
 //  [CFG] Shared colours
